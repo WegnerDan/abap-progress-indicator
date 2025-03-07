@@ -16,6 +16,7 @@ CLASS zcl_progress_indicator DEFINITION PUBLIC FINAL CREATE PRIVATE.
       "! @parameter suppress_others | suppress progress indicators issued from outside this class<br/>
       "! this sets parameter id SIN <br/>
       "! restore value of SIN, if follow up steps with progress indicator exist
+      "! @parameter run_in_batch | Output messages when running in batch mode
       "! @parameter result | progress indicator object
       create IMPORTING number_of_items TYPE i
                        pack_size_min   TYPE i DEFAULT 1
@@ -23,6 +24,7 @@ CLASS zcl_progress_indicator DEFINITION PUBLIC FINAL CREATE PRIVATE.
                        message_id      TYPE sy-msgid
                        message_number  TYPE sy-msgno
                        suppress_others TYPE abap_bool DEFAULT abap_false
+                       run_in_batch    TYPE abap_bool DEFAULT abap_false
              RETURNING VALUE(result)   TYPE REF TO zcl_progress_indicator,
 
       "! create progress indicator object with externally calculated package size<br/><br/>
@@ -37,12 +39,14 @@ CLASS zcl_progress_indicator DEFINITION PUBLIC FINAL CREATE PRIVATE.
       "! @parameter suppress_others | suppress progress indicators issued from outside this class<br/>
       "! this sets parameter id SIN <br/>
       "! restore value of SIN, if follow up steps with progress indicator exist
+      "! @parameter run_in_batch | Output messages when running in batch mode
       "! @parameter result | progress indicator object
       create_with_package_size IMPORTING number_of_items TYPE i
                                          package_size    TYPE i
                                          message_id      TYPE sy-msgid
                                          message_number  TYPE sy-msgno
                                          suppress_others TYPE abap_bool DEFAULT abap_false
+                                         run_in_batch    TYPE abap_bool DEFAULT abap_false
                                RETURNING VALUE(result)   TYPE REF TO zcl_progress_indicator,
 
       "! This method calculates a package size for calling
@@ -90,21 +94,22 @@ CLASS zcl_progress_indicator DEFINITION PUBLIC FINAL CREATE PRIVATE.
       package_size    TYPE i,
       message_id      TYPE sy-msgid,
       message_no      TYPE sy-msgno,
-      suppress_others TYPE abap_bool.
+      suppress_others TYPE abap_bool,
+      run_in_batch    TYPE abap_bool.
 ENDCLASS.
 
 
 CLASS zcl_progress_indicator IMPLEMENTATION.
-
   METHOD create.
     result = NEW #( ).
     result->message_id      = message_id.
     result->message_no      = message_number.
     result->number_of_items = number_of_items.
     result->suppress_others = suppress_others.
-    result->package_size = determine_package_size( number_of_items = number_of_items
-                                                   lower_boundary  = pack_size_min
-                                                   upper_boundary  = pack_size_max ).
+    result->run_in_batch    = run_in_batch.
+    result->package_size    = determine_package_size( number_of_items = number_of_items
+                                                      lower_boundary  = pack_size_min
+                                                      upper_boundary  = pack_size_max ).
   ENDMETHOD.
 
   METHOD create_with_package_size.
@@ -114,6 +119,7 @@ CLASS zcl_progress_indicator IMPLEMENTATION.
     result->number_of_items = number_of_items.
     result->package_size    = package_size.
     result->suppress_others = suppress_others.
+    result->run_in_batch    = run_in_batch.
   ENDMETHOD.
 
   METHOD determine_package_size.
@@ -162,6 +168,11 @@ CLASS zcl_progress_indicator IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD indicate.
+    IF     run_in_batch = abap_false
+       AND sy-batch     = abap_true.
+      RETURN.
+    ENDIF.
+
     IF suppress_others = abap_true.
       SET PARAMETER ID c_memid_suppress_progress_ind FIELD '0'.
     ENDIF.
