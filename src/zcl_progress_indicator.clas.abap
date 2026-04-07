@@ -1,7 +1,10 @@
 CLASS zcl_progress_indicator DEFINITION PUBLIC FINAL CREATE PRIVATE.
   PUBLIC SECTION.
     CONSTANTS:
+      "! SET/GET parameter SIN <br>
+      "! see note 51373 (Problems with progress indicator at WAN connection) for details
       c_memid_suppress_progress_ind TYPE memoryid VALUE 'SIN'.
+
     CLASS-METHODS:
       "! create progress indicator object with internally calculated package size<br/><br/>
       "! see method determine_package_size for details about package size<br/><br/>
@@ -19,8 +22,8 @@ CLASS zcl_progress_indicator DEFINITION PUBLIC FINAL CREATE PRIVATE.
       "! @parameter run_in_batch | Output messages when running in batch mode
       "! @parameter result | progress indicator object
       create IMPORTING number_of_items TYPE i
-                       pack_size_min   TYPE i DEFAULT 1
-                       pack_size_max   TYPE i DEFAULT 1000
+                       pack_size_min   TYPE i         DEFAULT 1
+                       pack_size_max   TYPE i         DEFAULT 1000
                        message_id      TYPE sy-msgid
                        message_number  TYPE sy-msgno
                        suppress_others TYPE abap_bool DEFAULT abap_false
