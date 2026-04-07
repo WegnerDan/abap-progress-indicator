@@ -81,6 +81,12 @@ CLASS zcl_progress_indicator DEFINITION PUBLIC FINAL CREATE PRIVATE.
                              RETURNING VALUE(result)   TYPE i.
 
     METHODS:
+      "! calculate percentage of finished items
+      "! @parameter processed_items | number of processed/finished items
+      "! @parameter result | percentage of finished items
+      calc_percentage IMPORTING processed_items TYPE i
+                      RETURNING VALUE(result)   TYPE i,
+
       "! determine if progress indicator output is required according to package size
       "! @parameter processed_items | number of processed items
       "! @parameter result | abap_true if progress indicator output is required
@@ -161,6 +167,13 @@ CLASS zcl_progress_indicator IMPLEMENTATION.
       ENDWHILE.
       result *= multiplier.
     ENDIF.
+  ENDMETHOD.
+
+  METHOD calc_percentage.
+    DATA percentage_f TYPE f.
+
+    percentage_f = ( processed_items * 100 ) / number_of_items.
+    result = percentage_f.
   ENDMETHOD.
 
   METHOD output_required.
