@@ -4,14 +4,20 @@
   <asx:values>
    <VSEOCLASS>
     <CLSNAME>ZCL_PROGRESS_INDICATOR</CLSNAME>
-    <LANGU>D</LANGU>
-    <DESCRIPT>Fortschrittsanzeige Hilfszeug</DESCRIPT>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Progress indicator</DESCRIPT>
     <STATE>1</STATE>
     <CLSCCINCL>X</CLSCCINCL>
     <FIXPT>X</FIXPT>
     <UNICODE>X</UNICODE>
     <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>
    </VSEOCLASS>
+   <DESCRIPTIONS_CLASS>
+    <SEOCLASSTX>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Progress indicator</DESCRIPT>
+    </SEOCLASSTX>
+   </DESCRIPTIONS_CLASS>
   </asx:values>
  </asx:abap>
 </abapGit>
