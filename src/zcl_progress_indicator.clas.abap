@@ -203,6 +203,7 @@ CLASS zcl_progress_indicator IMPLEMENTATION.
 
   METHOD output_required.
     IF    processed_items MOD package_size = 0
+       OR processed_items                  = 1
        OR processed_items                  = number_of_items.
       result = abap_true.
     ENDIF.
