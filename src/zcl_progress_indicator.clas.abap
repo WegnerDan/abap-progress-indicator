@@ -3,8 +3,8 @@ CLASS zcl_progress_indicator DEFINITION PUBLIC FINAL CREATE PRIVATE.
     CONSTANTS:
       "! SET/GET parameter SIN <br/>
       "! see note 51373 (Problems with progress indicator at WAN connection) for details <br/>
+      "! SIN = ''  -> default value, progress indicators are NOT suppressed
       "! SIN = '0' -> output of progress indicators is suppressed  <br/>
-      "! SIN = '1' -> default value, progress indicators are NOT suppressed
       c_memid_suppress_progress_ind TYPE memoryid VALUE 'SIN'.
 
     CLASS-DATA:
