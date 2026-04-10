@@ -128,6 +128,10 @@ CLASS zcl_progress_indicator IMPLEMENTATION.
 
   METHOD restore_param_sin.
     SET PARAMETER ID c_memid_suppress_progress_ind FIELD suppress_progress_indicator.
+    ASSIGN ('(SAPLSGUI)PROG_INDI_CHECKED') TO FIELD-SYMBOL(<prog_indi_checked>).
+    IF sy-subrc = 0.
+      CLEAR <prog_indi_checked>.
+    ENDIF.
   ENDMETHOD.
 
   METHOD create.
@@ -219,7 +223,7 @@ CLASS zcl_progress_indicator IMPLEMENTATION.
     ENDIF.
 
     IF suppress_others = abap_true.
-      SET PARAMETER ID c_memid_suppress_progress_ind FIELD '1'.
+      restore_param_sin( ).
     ENDIF.
 
     MESSAGE ID message_id
