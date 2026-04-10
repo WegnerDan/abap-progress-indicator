@@ -1,11 +1,19 @@
 CLASS zcl_progress_indicator DEFINITION PUBLIC FINAL CREATE PRIVATE.
   PUBLIC SECTION.
     CONSTANTS:
-      "! SET/GET parameter SIN <br>
-      "! see note 51373 (Problems with progress indicator at WAN connection) for details
+      "! SET/GET parameter SIN <br/>
+      "! see note 51373 (Problems with progress indicator at WAN connection) for details <br/>
+      "! SIN = '0' -> output of progress indicators is suppressed  <br/>
+      "! SIN = '1' -> default value, progress indicators are NOT suppressed
       c_memid_suppress_progress_ind TYPE memoryid VALUE 'SIN'.
 
+    CLASS-DATA:
+      "! this is the original value of param SIN (see constant C_MEMID_SUPPRESS_PROGRESS_IND)
+      suppress_progress_indicator TYPE xuvalue READ-ONLY.
+
     CLASS-METHODS:
+      class_constructor,
+
       "! create progress indicator object with internally calculated package size<br/><br/>
       "! see method determine_package_size for details about package size<br/><br/>
       "! @parameter number_of_items | number of items that are being processed
@@ -78,7 +86,11 @@ CLASS zcl_progress_indicator DEFINITION PUBLIC FINAL CREATE PRIVATE.
       determine_package_size IMPORTING number_of_items TYPE i
                                        lower_boundary  TYPE i DEFAULT 1
                                        upper_boundary  TYPE i DEFAULT 1000
-                             RETURNING VALUE(result)   TYPE i.
+                             RETURNING VALUE(result)   TYPE i,
+
+      "! restores SET/GET parameter SIN to its original value <br>
+      "! see constant C_MEMID_SUPPRESS_PROGRESS_IND
+      restore_param_sin.
 
     METHODS:
       "! calculate percentage of finished items
@@ -105,10 +117,19 @@ CLASS zcl_progress_indicator DEFINITION PUBLIC FINAL CREATE PRIVATE.
       message_no      TYPE sy-msgno,
       suppress_others TYPE abap_bool,
       run_in_batch    TYPE abap_bool.
+
 ENDCLASS.
 
 
 CLASS zcl_progress_indicator IMPLEMENTATION.
+  METHOD class_constructor.
+    GET PARAMETER ID c_memid_suppress_progress_ind FIELD suppress_progress_indicator.
+  ENDMETHOD.
+
+  METHOD restore_param_sin.
+    SET PARAMETER ID c_memid_suppress_progress_ind FIELD suppress_progress_indicator.
+  ENDMETHOD.
+
   METHOD create.
     result = NEW #( ).
     result->message_id      = message_id.
@@ -220,5 +241,4 @@ CLASS zcl_progress_indicator IMPLEMENTATION.
       SET PARAMETER ID c_memid_suppress_progress_ind FIELD '0'.
     ENDIF.
   ENDMETHOD.
-
 ENDCLASS.
